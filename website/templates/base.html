@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css"
+    />
+    <title>{% block title %}Home{% endblock %}</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#"
+          >P<span style="color: dodgerblue">P</span>S
+          <small style="font-size: 0.5rem"
+            >Pathways
+            <span style="color: dodgerblue"> Publishing</span> Site</small
+          ></a
+        >
+        <!-- Button trigger modal -->
+        <button
+          type="button"
+          class="btn btn-primary nav-item"
+          data-bs-toggle="modal"
+          data-bs-target="#staticBackdrop"
+        >
+          <i class="bi bi-plus-lg"></i>
+        </button>
+
+        <!-- Modal -->
+        <div
+          class="modal fade"
+          id="staticBackdrop"
+          data-bs-backdrop="static"
+          data-bs-keyboard="false"
+          tabindex="-1"
+          aria-labelledby="staticBackdropLabel"
+          aria-hidden="true"
+        >
+          <div
+            class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+          >
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">
+                  Upload a Story
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <form enctype="multipart/form-data" method="POST">
+                  <input
+                    type="text"
+                    class="form-control mb-3"
+                    name="title"
+                    placeholder="mystory title"
+                  />
+                  <input
+                    type="text"
+                    class="form-control mb-3"
+                    name="author"
+                    placeholder="my story author"
+                  />
+                  <input type="date" class="form-control mb-3" name="date" />
+                  <input
+                    type="file"
+                    class="form-control mb-3"
+                    name="file"
+                    placeholder="mystory.pdf"
+                  />
+                  <button type="submit" class="btn btn-primary mb-2">
+                    Submit
+                  </button>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %} {% if category ==
+    'error' %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% else %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endif %} {% endfor %} {% endif %} {%endwith %}
+    <main class="mt-5">
+      <div class="container">
+        <form action="/sort" method="POST" class="mt-5">
+          <div class="input-group">
+            <input
+              type="search"
+              name="search"
+              id="search"
+              class="form-control"
+              placeholder="author, title, or date"
+            />
+            <div>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i> search
+              </button>
+            </div>
+          </div>
+        </form>
+        <!-- <ul class="list-group list-group-flush" id="notes"> -->
+        {% for file in files %}
+        <!-- <li
+            class="list-group-item d-flex justify-content-between mw-100 text-wrap"
+          > -->
+        <div class="card m-4">
+          <div class="card-body">
+            <button
+              type="button"
+              class="btn btn-link"
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop{{file.id}}"
+            >
+              <h5 class="card-title">{{file.title}}</h5>
+            </button>
+            <div
+              class="modal fade"
+              id="staticBackdrop{{file.id}}"
+              data-bs-backdrop="static"
+              data-bs-keyboard="false"
+              tabindex="-1"
+              aria-labelledby="staticBackdropLabel"
+              aria-hidden="true"
+            >
+              <div
+                class="modal-dialog modal-fullscreen modal-lg modal-dialog-centered modal-dialog-scrollable"
+              >
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">
+                      {{file.title}}
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <embed src="{{file.filename}}" width="100%" height="100%" />
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr />
+            <h6 class="card-subtitle mb-2 text-muted">
+              by: {{file.author}} | made: {{file.date}}
+            </h6>
+          </div>
+        </div>
+        <!-- </li> -->
+        {% endfor %}
+        <!-- </ul> -->
+      </div>
+    </main>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename='index.js') }}"
+    ></script>
+  </body>
+</html>
